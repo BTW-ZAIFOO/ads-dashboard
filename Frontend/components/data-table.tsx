@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Drawer,
   DrawerClose,
@@ -18,21 +18,17 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  IconDotsVertical,
-  IconGripVertical,
-  IconX,
-} from "@tabler/icons-react"
-import { z } from "zod"
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { IconDotsVertical, IconGripVertical, IconX } from "@tabler/icons-react";
+import { z } from "zod";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   ColumnDef,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 export const schema = z.object({
   id: z.number(),
@@ -43,18 +39,18 @@ export const schema = z.object({
   Conversions: z.string(),
   Spend: z.string(),
   Status: z.string(),
-})
+});
 
-type Campaign = z.infer<typeof schema>
+type Campaign = z.infer<typeof schema>;
 
 const DragHandle = ({ id }: { id: number }) => (
   <div className="cursor-grab p-2 text-muted-foreground hover:text-primary">
     <IconGripVertical size={16} />
   </div>
-)
+);
 
 const TableCellViewer = ({ item }: { item: Campaign }) => {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -107,8 +103,8 @@ const TableCellViewer = ({ item }: { item: Campaign }) => {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
-}
+  );
+};
 
 const columns: ColumnDef<Campaign>[] = [
   {
@@ -157,30 +153,22 @@ const columns: ColumnDef<Campaign>[] = [
   {
     accessorKey: "Impressions",
     header: "Impressions",
-    cell: ({ row }) => (
-      <div>{row.original.Impressions}</div>
-    ),
+    cell: ({ row }) => <div>{row.original.Impressions}</div>,
   },
   {
     accessorKey: "Clicks",
     header: "Clicks",
-    cell: ({ row }) => (
-      <div>{row.original.Clicks}</div>
-    ),
+    cell: ({ row }) => <div>{row.original.Clicks}</div>,
   },
   {
     accessorKey: "Conversions",
     header: "Conversions",
-    cell: ({ row }) => (
-      <div>{row.original.Conversions}</div>
-    ),
+    cell: ({ row }) => <div>{row.original.Conversions}</div>,
   },
   {
     accessorKey: "Spend",
     header: "Spend",
-    cell: ({ row }) => (
-      <div>{row.original.Spend}</div>
-    ),
+    cell: ({ row }) => <div>{row.original.Spend}</div>,
   },
   {
     accessorKey: "Status",
@@ -219,14 +207,14 @@ const columns: ColumnDef<Campaign>[] = [
       </DropdownMenu>
     ),
   },
-]
+];
 
 export function DataTable({ data }: { data: Campaign[] }) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
   return (
     <div className="overflow-x-auto border rounded-lg">
@@ -236,7 +224,10 @@ export function DataTable({ data }: { data: Campaign[] }) {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} className="px-4 py-2 font-medium">
-                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
                 </th>
               ))}
             </tr>
@@ -266,6 +257,5 @@ export function DataTable({ data }: { data: Campaign[] }) {
         </tbody>
       </table>
     </div>
-  )
+  );
 }
-

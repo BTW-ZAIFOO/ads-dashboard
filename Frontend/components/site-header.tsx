@@ -15,10 +15,10 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   search: {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-  }
+    title: "Search",
+    url: "#",
+    icon: IconSearch,
+  },
 };
 
 export function SiteHeader() {

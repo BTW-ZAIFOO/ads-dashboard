@@ -1,11 +1,17 @@
-"use client"
+"use client";
 
-import { Card } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SettingsPage() {
   return (
@@ -28,7 +34,11 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input type="email" id="email" defaultValue="user@example.com" />
+                <Input
+                  type="email"
+                  id="email"
+                  defaultValue="user@example.com"
+                />
               </div>
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="company">Company Name</Label>
@@ -52,7 +62,9 @@ export default function SettingsPage() {
           </Card>
 
           <Card className="p-6">
-            <h3 className="text-xl font-semibold mb-4">Default Campaign Settings</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              Default Campaign Settings
+            </h3>
             <div className="space-y-4">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="defaultBudget">Default Daily Budget</Label>
@@ -78,18 +90,35 @@ export default function SettingsPage() {
 
         <TabsContent value="notifications" className="space-y-4">
           <Card className="p-6">
-            <h3 className="text-xl font-semibold mb-4">Notification Preferences</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              Notification Preferences
+            </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <input type="checkbox" id="emailNotifs" className="rounded border-gray-300" defaultChecked />
+                <input
+                  type="checkbox"
+                  id="emailNotifs"
+                  className="rounded border-gray-300"
+                  defaultChecked
+                />
                 <Label htmlFor="emailNotifs">Email Notifications</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" id="budgetAlerts" className="rounded border-gray-300" defaultChecked />
+                <input
+                  type="checkbox"
+                  id="budgetAlerts"
+                  className="rounded border-gray-300"
+                  defaultChecked
+                />
                 <Label htmlFor="budgetAlerts">Budget Alerts</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" id="performanceAlerts" className="rounded border-gray-300" defaultChecked />
+                <input
+                  type="checkbox"
+                  id="performanceAlerts"
+                  className="rounded border-gray-300"
+                  defaultChecked
+                />
                 <Label htmlFor="performanceAlerts">Performance Alerts</Label>
               </div>
               <Button>Save Preferences</Button>
@@ -107,7 +136,11 @@ export default function SettingsPage() {
               </div>
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="cardNumber">Card Number</Label>
-                <Input type="text" id="cardNumber" placeholder="**** **** **** ****" />
+                <Input
+                  type="text"
+                  id="cardNumber"
+                  placeholder="**** **** **** ****"
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid items-center gap-1.5">
@@ -131,7 +164,13 @@ export default function SettingsPage() {
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="apiKey">API Key</Label>
                 <div className="flex space-x-2">
-                  <Input type="text" id="apiKey" value="sk_test_123456789" readOnly className="flex-1" />
+                  <Input
+                    type="text"
+                    id="apiKey"
+                    value="sk_test_123456789"
+                    readOnly
+                    className="flex-1"
+                  />
                   <Button variant="outline">Copy</Button>
                 </div>
               </div>
@@ -141,5 +180,5 @@ export default function SettingsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
