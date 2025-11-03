@@ -21,7 +21,10 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IconDotsVertical, IconGripVertical, IconX } from "@tabler/icons-react";
+import {
+  IconDotsVertical,
+  IconX,
+} from "@tabler/icons-react";
 import { z } from "zod";
 import {
   useReactTable,
@@ -29,6 +32,16 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export const schema = z.object({
   id: z.number(),
@@ -43,14 +56,25 @@ export const schema = z.object({
 
 type Campaign = z.infer<typeof schema>;
 
-const DragHandle = ({ id }: { id: number }) => (
-  <div className="cursor-grab p-2 text-muted-foreground hover:text-primary">
-    <IconGripVertical size={16} />
-  </div>
-);
-
 const TableCellViewer = ({ item }: { item: Campaign }) => {
   const [open, setOpen] = React.useState(false);
+
+  const campaignData = React.useMemo(() => {
+    const points = 7;
+    const random = (val: number) => Math.max(0, val + Math.floor(Math.random() * 30 - 15));
+    const impressions = parseInt(item.Impressions);
+    const clicks = parseInt(item.Clicks);
+    const conversions = parseInt(item.Conversions);
+    const spend = parseInt(item.Spend);
+
+    return Array.from({ length: points }).map((_, i) => ({
+      day: `Day ${i + 1}`,
+      Impressions: random(impressions),
+      Clicks: random(clicks),
+      Conversions: random(conversions),
+      Spend: random(spend),
+    }));
+  }, [item]);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -59,9 +83,10 @@ const TableCellViewer = ({ item }: { item: Campaign }) => {
           {item.CampaignName}
         </button>
       </DrawerTrigger>
+
       <DrawerContent>
         <DrawerHeader className="flex justify-between items-center border-b pb-2">
-          <DrawerTitle>{item.CampaignName}</DrawerTitle>
+          <DrawerTitle>{item.CampaignName} — Insights</DrawerTitle>
           <DrawerClose asChild>
             <Button variant="ghost" size="icon">
               <IconX />
@@ -70,29 +95,74 @@ const TableCellViewer = ({ item }: { item: Campaign }) => {
         </DrawerHeader>
 
         <div className="p-4 grid gap-4">
-          <div className="grid gap-2">
-            <Label>Platform</Label>
-            <Input value={item.Platform} readOnly />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+              <Label>Platform</Label>
+              <Input value={item.Platform} readOnly />
+            </div>
+            <div>
+              <Label>Impressions</Label>
+              <Input value={item.Impressions} readOnly />
+            </div>
+            <div>
+              <Label>Clicks</Label>
+              <Input value={item.Clicks} readOnly />
+            </div>
+            <div>
+              <Label>Conversions</Label>
+              <Input value={item.Conversions} readOnly />
+            </div>
+            <div>
+              <Label>Spend</Label>
+              <Input value={item.Spend} readOnly />
+            </div>
+            <div>
+              <Label>Status</Label>
+              <Input value={item.Status} readOnly />
+            </div>
           </div>
-          <div className="grid gap-2">
-            <Label>Impressions</Label>
-            <Input value={item.Impressions} readOnly />
-          </div>
-          <div className="grid gap-2">
-            <Label>Clicks</Label>
-            <Input value={item.Clicks} readOnly />
-          </div>
-          <div className="grid gap-2">
-            <Label>Conversions</Label>
-            <Input value={item.Conversions} readOnly />
-          </div>
-          <div className="grid gap-2">
-            <Label>Spend</Label>
-            <Input value={item.Spend} readOnly />
-          </div>
-          <div className="grid gap-2">
-            <Label>Status</Label>
-            <Input value={item.Status} readOnly />
+
+          <div className="mt-6 h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={campaignData}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="Impressions"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Clicks"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Conversions"
+                  stroke="#f59e0b"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Spend"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -106,112 +176,104 @@ const TableCellViewer = ({ item }: { item: Campaign }) => {
   );
 };
 
-const columns: ColumnDef<Campaign>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "CampaignName",
-    header: "Campaign Name",
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
-  },
-  {
-    accessorKey: "Platform",
-    header: "Platform",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground">
-        {row.original.Platform}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "Impressions",
-    header: "Impressions",
-    cell: ({ row }) => <div>{row.original.Impressions}</div>,
-  },
-  {
-    accessorKey: "Clicks",
-    header: "Clicks",
-    cell: ({ row }) => <div>{row.original.Clicks}</div>,
-  },
-  {
-    accessorKey: "Conversions",
-    header: "Conversions",
-    cell: ({ row }) => <div>{row.original.Conversions}</div>,
-  },
-  {
-    accessorKey: "Spend",
-    header: "Spend",
-    cell: ({ row }) => <div>{row.original.Spend}</div>,
-  },
-  {
-    accessorKey: "Status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge
-        variant="outline"
-        className={`px-2 ${
-          row.original.Status === "Online"
-            ? "text-green-500 border-green-500"
-            : "text-yellow-500 border-yellow-500"
-        }`}
-      >
-        {row.original.Status}
-      </Badge>
-    ),
-  },
-  {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuItem>Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
+export function DataTable({
+  data,
+  onDataChange,
+}: {
+  data: Campaign[];
+  onDataChange?: (newData: Campaign[]) => void;
+}) {
+  const [dataState, setDataState] = React.useState<Campaign[]>(data);
 
-export function DataTable({ data }: { data: Campaign[] }) {
+  const handleDelete = (id: number) => {
+    const filtered = dataState.filter((item) => item.id !== id);
+    setDataState(filtered);
+    if (onDataChange) onDataChange(filtered);
+  };
+
+  const columns: ColumnDef<Campaign>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+          />
+        </div>
+      ),
+    },
+    {
+      accessorKey: "CampaignName",
+      header: "Campaign Name",
+      cell: ({ row }) => <TableCellViewer item={row.original} />,
+    },
+    {
+      accessorKey: "Platform",
+      header: "Platform",
+      cell: ({ row }) => (
+        <Badge variant="outline" className="text-muted-foreground">
+          {row.original.Platform}
+        </Badge>
+      ),
+    },
+    { accessorKey: "Impressions", header: "Impressions" },
+    { accessorKey: "Clicks", header: "Clicks" },
+    { accessorKey: "Conversions", header: "Conversions" },
+    { accessorKey: "Spend", header: "Spend" },
+    {
+      accessorKey: "Status",
+      header: "Status",
+      cell: ({ row }) => (
+        <Badge
+          variant="outline"
+          className={`px-2 ${
+            row.original.Status === "Online"
+              ? "text-green-500 border-green-500"
+              : "text-yellow-500 border-yellow-500"
+          }`}
+        >
+          {row.original.Status}
+        </Badge>
+      ),
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground">
+              <IconDotsVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleDelete(row.original.id)}
+              className="text-red-600"
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
+
   const table = useReactTable({
-    data,
+    data: dataState,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -224,10 +286,7 @@ export function DataTable({ data }: { data: Campaign[] }) {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} className="px-4 py-2 font-medium">
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>
