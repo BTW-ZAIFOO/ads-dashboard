@@ -4,11 +4,6 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Chart } from "@/components/ui/chart";
 
-/* --------------------------------------------------------------------------
-  🎯 Function: detectPlatform
-  Identifies the advertising platform based on the campaign name string.
-  Used to group data and calculate per-platform budgets.
--------------------------------------------------------------------------- */
 function detectPlatform(name: string) {
   const lower = name.toLowerCase();
   if (lower.includes("google")) return "Google";
@@ -20,31 +15,22 @@ function detectPlatform(name: string) {
   return "Other";
 }
 
-/* --------------------------------------------------------------------------
-  📊 Function: computeAggregates
-  - Calculates platform-level and monthly-level spend and budget data.
-  - Returns aggregate stats including totals and structured chart data.
--------------------------------------------------------------------------- */
 function computeAggregates(
   rows: Array<{ date: string; campaign_name: string; runrate: number }>
 ) {
-  // 🧮 Platform-level aggregation
   const platformSpendMap: Record<string, { allocated: number; spent: number }> =
     {};
 
   for (const d of rows) {
     const platform = detectPlatform(d.campaign_name);
 
-    // Initialize if platform not found
     if (!platformSpendMap[platform])
       platformSpendMap[platform] = { allocated: 0, spent: 0 };
 
-    // Example logic: spent = runrate * 10, allocated = runrate * 20
     platformSpendMap[platform].spent += d.runrate * 10;
     platformSpendMap[platform].allocated += d.runrate * 20;
   }
 
-  // Convert to chart-friendly array format
   const platformSpend = Object.entries(platformSpendMap).map(
     ([platform, v]) => ({
       platform,
@@ -53,7 +39,6 @@ function computeAggregates(
     })
   );
 
-  // 📅 Monthly aggregation
   const byMonth: Record<string, { budget: number; spent: number }> = {};
 
   for (const d of rows) {
@@ -69,7 +54,6 @@ function computeAggregates(
     byMonth[key].spent += d.runrate * 10;
   }
 
-  // Convert monthly data into an array sorted by date
   const budgetMonthly = Object.entries(byMonth)
     .sort(([a], [b]) => (a < b ? -1 : 1))
     .map(([key, v]) => ({
@@ -78,7 +62,6 @@ function computeAggregates(
       spent: Math.round(v.spent),
     }));
 
-  // 💰 Totals
   const totalBudget = platformSpend.reduce(
     (acc, curr) => acc + curr.allocated,
     0
@@ -88,12 +71,7 @@ function computeAggregates(
   return { platformSpend, budgetMonthly, totalBudget, totalSpent };
 }
 
-/* --------------------------------------------------------------------------
-  💼 Component: BudgetPage
-  Displays an overview of advertising budgets, spend trends, and per-platform stats.
--------------------------------------------------------------------------- */
 export default function BudgetPage() {
-  // 📦 Local state for computed data
   const [state, setState] = React.useState(() => ({
     platformSpend: [] as any[],
     budgetMonthly: [] as any[],
@@ -101,7 +79,6 @@ export default function BudgetPage() {
     totalSpent: 0,
   }));
 
-  // 🚀 Fetch data from API (Supabase endpoint or local API)
   React.useEffect(() => {
     const load = async () => {
       const base = process.env.NEXT_PUBLIC_BACKEND_URL || "";
@@ -117,30 +94,20 @@ export default function BudgetPage() {
         runrate: number;
       }>;
 
-      // Compute and set aggregates
       setState(computeAggregates(rows));
     };
     load();
   }, []);
 
-  // Destructure computed values
   const { platformSpend, budgetMonthly, totalBudget, totalSpent } = state;
 
-  /* ------------------------------------------------------------------------
-    🧭 Render Layout
-    - Top cards show totals
-    - Charts display trends and platform-level spend
-  ------------------------------------------------------------------------ */
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      {/* Header */}
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Budget & Spend</h2>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Total Budget */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Total Budget</p>
@@ -150,7 +117,6 @@ export default function BudgetPage() {
           </div>
         </Card>
 
-        {/* Total Spent */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Total Spent</p>
@@ -158,7 +124,6 @@ export default function BudgetPage() {
           </div>
         </Card>
 
-        {/* Remaining Budget */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Remaining</p>
@@ -168,7 +133,6 @@ export default function BudgetPage() {
           </div>
         </Card>
 
-        {/* Spend Rate */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Spend Rate</p>
@@ -182,9 +146,7 @@ export default function BudgetPage() {
         </Card>
       </div>
 
-      {/* Charts and Platform Analysis */}
       <div className="grid gap-4 md:grid-cols-2">
-        {/* 📈 Budget vs Spend Trend */}
         <Card>
           <div className="p-4">
             <h3 className="text-xl font-semibold mb-4">
@@ -201,14 +163,12 @@ export default function BudgetPage() {
           </div>
         </Card>
 
-        {/* 🧩 Platform-wise Budget Progress */}
         <Card>
           <div className="p-4">
             <h3 className="text-xl font-semibold mb-4">Platform-wise Budget</h3>
             <div className="space-y-4">
               {platformSpend.map((platform) => (
                 <div key={platform.platform} className="space-y-2">
-                  {/* Platform name and values */}
                   <div className="flex justify-between">
                     <span>{platform.platform}</span>
                     <span>
@@ -217,7 +177,6 @@ export default function BudgetPage() {
                     </span>
                   </div>
 
-                  {/* Progress bar */}
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 rounded-full"

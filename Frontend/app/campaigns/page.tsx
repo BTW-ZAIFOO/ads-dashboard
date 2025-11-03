@@ -4,7 +4,6 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// ✅ Helper function to identify ad platform
 function detectPlatform(name: string) {
   const lower = name.toLowerCase();
   if (lower.includes("google")) return "Google";
@@ -16,7 +15,6 @@ function detectPlatform(name: string) {
   return "Other";
 }
 
-// ✅ Map Supabase rows into display-ready campaign data
 function mapRows(
   rows: Array<{
     id?: number;
@@ -76,7 +74,6 @@ export default function CampaignsPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Campaigns</h2>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -84,7 +81,6 @@ export default function CampaignsPage() {
         </Button>
       </div>
 
-      {/* Campaigns Table */}
       <Card className="overflow-hidden">
         <div className="p-4">
           <div className="relative w-full overflow-auto rounded-lg">

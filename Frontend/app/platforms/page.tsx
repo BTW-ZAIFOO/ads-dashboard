@@ -142,12 +142,10 @@ export default function PlatformsPage() {
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Ad Platforms</h2>
       </div>
 
-      {/* Platform Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {platforms.map((p) => {
           const Icon = p.icon;
@@ -173,8 +171,7 @@ export default function PlatformsPage() {
           );
         })}
       </div>
-
-      {/* Chart Section */}
+      
       <Card>
         <div className="p-4 min-w-0">
           <h3 className="text-xl font-semibold mb-4">Platform Comparison</h3>

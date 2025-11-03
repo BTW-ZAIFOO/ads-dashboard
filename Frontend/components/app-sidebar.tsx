@@ -139,7 +139,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => {
-                // Add logout functionality here
                 console.log("Logging out...");
               }}
               className="text-red-500 hover:text-red-600"

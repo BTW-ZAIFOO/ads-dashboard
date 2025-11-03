@@ -11,9 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-/* --------------------------------------------------------------------------
-  🔍 Utility Function: Detect Ad Platform from Campaign Name
--------------------------------------------------------------------------- */
 function detectPlatform(name: string) {
   const lower = name.toLowerCase();
   if (lower.includes("google")) return "google";
@@ -24,11 +21,6 @@ function detectPlatform(name: string) {
   return "other";
 }
 
-/* --------------------------------------------------------------------------
-  📊 Data Transformation: Build Analytics from Raw Ad Rows
-  - Calculates daily performance metrics (CTR, CVR)
-  - Aggregates totals by platform
--------------------------------------------------------------------------- */
 function buildAnalytics(
   rows: Array<{
     date: string;
@@ -38,17 +30,15 @@ function buildAnalytics(
     campaign_name: string;
   }>
 ) {
-  // Calculate performance per date
   const performance = rows.map((d) => ({
     date: d.date,
     impressions: d.impressions,
     clicks: d.clicks,
     conversions: d.conversions,
-    ctr: d.impressions ? (d.clicks / d.impressions) * 100 : 0, // Click-Through Rate (%)
-    cvr: d.clicks ? (d.conversions / d.clicks) * 100 : 0, // Conversion Rate (%)
+    ctr: d.impressions ? (d.clicks / d.impressions) * 100 : 0,
+    cvr: d.clicks ? (d.conversions / d.clicks) * 100 : 0,
   }));
 
-  // Aggregate data by detected platform
   const platformsAgg: Record<
     string,
     { impressions: number; clicks: number; conversions: number }
@@ -68,21 +58,12 @@ function buildAnalytics(
   return { performance, platforms: platformsAgg };
 }
 
-/* --------------------------------------------------------------------------
-  🧠 Main Component: AnalyticsPage
-  - Fetches ad data
-  - Builds analytics
-  - Displays metrics & charts
--------------------------------------------------------------------------- */
 export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = React.useState({
     performance: [] as any[],
     platforms: {} as Record<string, any>,
   });
 
-  /* ----------------------------------------------------------------------
-    🧩 Load data on mount from backend or local API
-  ---------------------------------------------------------------------- */
   React.useEffect(() => {
     const load = async () => {
       const base = process.env.NEXT_PUBLIC_BACKEND_URL || "";
@@ -105,9 +86,6 @@ export default function AnalyticsPage() {
     load();
   }, []);
 
-  /* ----------------------------------------------------------------------
-    ⚙️ Prepare platform chart data
-  ---------------------------------------------------------------------- */
   const platformChartData = React.useMemo(() => {
     return Object.entries(analyticsData.platforms).map(
       ([platform, data]: any) => ({
@@ -120,12 +98,8 @@ export default function AnalyticsPage() {
     );
   }, [analyticsData.platforms]);
 
-  /* ----------------------------------------------------------------------
-    🖼️ Render Dashboard UI
-  ---------------------------------------------------------------------- */
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      {/* ---------------- Page Header ---------------- */}
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">
           Performance Analytics
@@ -145,9 +119,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* ---------------- KPI Summary Cards ---------------- */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Total Impressions */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Total Impressions</p>
@@ -159,7 +131,6 @@ export default function AnalyticsPage() {
           </div>
         </Card>
 
-        {/* Total Clicks */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Total Clicks</p>
@@ -171,7 +142,6 @@ export default function AnalyticsPage() {
           </div>
         </Card>
 
-        {/* Total Conversions */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Total Conversions</p>
@@ -183,7 +153,6 @@ export default function AnalyticsPage() {
           </div>
         </Card>
 
-        {/* Average CTR */}
         <Card className="p-4">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Average CTR</p>
@@ -206,7 +175,6 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* ---------------- Performance Trends Chart ---------------- */}
       <Card>
         <div className="p-4 min-w-0">
           <h3 className="text-xl font-semibold mb-4">Performance Trends</h3>
@@ -222,9 +190,7 @@ export default function AnalyticsPage() {
         </div>
       </Card>
 
-      {/* ---------------- Platform & Conversion Charts ---------------- */}
       <div className="grid gap-4 md:grid-cols-2">
-        {/* Platform Performance Chart */}
         <Card>
           <div className="p-4 min-w-0">
             <h3 className="text-xl font-semibold mb-4">Platform Performance</h3>
@@ -240,7 +206,6 @@ export default function AnalyticsPage() {
           </div>
         </Card>
 
-        {/* Conversion Rates Chart */}
         <Card>
           <div className="p-4 min-w-0">
             <h3 className="text-xl font-semibold mb-4">Conversion Rates</h3>

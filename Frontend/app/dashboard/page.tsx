@@ -6,7 +6,6 @@ import { DataTable } from "@/components/data-table";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { SectionCards } from "@/components/section-cards";
 
-// ✅ Detect ad platform based on campaign name
 function detectPlatform(campaignName: string): string {
   const name = campaignName.toLowerCase();
   if (name.includes("meta")) return "Meta";

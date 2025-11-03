@@ -166,56 +166,66 @@ export function ChartAreaInteractive() {
     if (timeRange === "all") return seriesData;
     const days = parseInt(timeRange);
     if (isNaN(days)) return seriesData;
-    const startDate = new Date();
-    startDate.setHours(0, 0, 0, 0);
-    startDate.setDate(startDate.getDate() - (days - 1));
-    const filtered = seriesData.filter((item) => {
-      const normalized = normalizeToYMD(item.date);
-      if (!normalized) return true;
-      const d = parseDateSafe(normalized);
-      if (!d) return true;
-      return d.getTime() >= startDate.getTime();
+
+    const sorted = [...seriesData].sort((a, b) => {
+      const da = parseDateSafe(normalizeToYMD(a.date) || a.date);
+      const db = parseDateSafe(normalizeToYMD(b.date) || b.date);
+      if (!da || !db) return 0;
+      return da.getTime() - db.getTime();
     });
-    return filtered.length ? filtered : seriesData;
+
+    return sorted.slice(-days);
   }, [timeRange, seriesData]);
 
   return (
     <Card className="w-full min-w-0">
       <CardHeader>
-        <CardTitle>Ad Performance Metrics</CardTitle>
-        <CardDescription>
-          <span className="hidden sm:block">
-            Ad performance metrics over time
-          </span>
-          <span className="sm:hidden">Performance trends</span>
-        </CardDescription>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <CardTitle>Ad Performance Metrics</CardTitle>
+            <CardDescription>
+              <span className="hidden sm:block">
+                Ad performance metrics over time
+              </span>
+              <span className="sm:hidden">Performance trends</span>
+            </CardDescription>
+          </div>
 
-        <CardAction className="flex items-center gap-2">
-          <ToggleGroup
-            type="single"
-            value={timeRange}
-            onValueChange={(val) => val && setTimeRange(val)}
-            variant="outline"
-            className="hidden md:flex space-x-2"
-          >
-            <ToggleGroupItem value="all">All</ToggleGroupItem>
-            <ToggleGroupItem value="7">Last 7 days</ToggleGroupItem>
-            <ToggleGroupItem value="15">Last 15 days</ToggleGroupItem>
-            <ToggleGroupItem value="30">Last 30 days</ToggleGroupItem>
-          </ToggleGroup>
+          <CardAction className="flex items-center justify-end">
+            <ToggleGroup
+              type="single"
+              value={timeRange}
+              onValueChange={(val) => val && setTimeRange(val)}
+              variant="outline"
+              className="hidden md:flex flex-row items-center justify-between"
+            >
+              <ToggleGroupItem value="all" className="px-4">
+                All
+              </ToggleGroupItem>
+              <ToggleGroupItem value="7" className="px-4">
+                7 days
+              </ToggleGroupItem>
+              <ToggleGroupItem value="15" className="px-4">
+                15 days
+              </ToggleGroupItem>
+              <ToggleGroupItem value="30" className="px-4">
+                30 days
+              </ToggleGroupItem>
+            </ToggleGroup>
 
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="flex w-40 md:hidden" size="sm">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="15">Last 15 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardAction>
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="flex w-40 md:hidden" size="sm">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="15">Last 15 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardAction>
+        </div>
       </CardHeader>
 
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 min-w-0">
