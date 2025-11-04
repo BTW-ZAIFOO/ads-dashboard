@@ -11,6 +11,7 @@ type AdRow = {
   clicks: number;
   conversions: number;
   runrate: number;
+  spend: number;
 };
 
 const app = express();
