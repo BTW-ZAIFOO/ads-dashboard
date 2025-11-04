@@ -19,8 +19,8 @@ import { useRouter } from "next/navigation";
 
 const data = {
   user: {
-    name: "OMNELYTIX",
-    email: "info@omnelytix.com",
+    name: "OMNELYTICS",
+    email: "info@OMNELYTICS.com",
     avatar: "/avatars/shadcn.jpg",
   },
 };
@@ -63,7 +63,7 @@ export function SiteHeader() {
             orientation="vertical"
             className="mx-2 data-[orientation=vertical]:h-4"
           />
-          <h1 className="text-base font-medium">OMNELYTIX</h1>
+          <h1 className="text-base font-medium">OMNELYTICS</h1>
 
           <div className="ml-auto flex items-center gap-2">
             <ThemeSelector />
@@ -89,7 +89,7 @@ export function SiteHeader() {
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
-          placeholder="Search anywhere in Omnelytix..."
+          placeholder="Search anywhere in OMNELYTICS..."
           value={query}
           onValueChange={setQuery}
         />
